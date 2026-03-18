@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Welcome - Event Reservation{% endblock %}
+
+{% block body %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="bi bi-calendar-event"></i> Discover Amazing Events
+        </h1>
+        <p class="lead mb-4">
+            Find and book tickets for the best events in Sousse and beyond.
+            From tech conferences to concerts, we've got you covered.
+        </p>
+        <a href="{{ path('event_index') }}" class="btn btn-light btn-lg">
+            <i class="bi bi-search"></i> Browse All Events
+        </a>
+    </div>
+</section>
+
+<!-- Featured Events -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">
+            <i class="bi bi-star-fill text-warning"></i> Upcoming Events
+        </h2>
+        
+        {% if events is empty %}
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i> No upcoming events at the moment. Check back soon!
+            </div>
+        {% else %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for event in events %}
+                    <div class="col">
+                        <div class="card h-100 event-card">
+                            <div class="event-image-placeholder">
+                                <i class="bi bi-calendar-event"></i>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ event.title }}</h5>
+                                <p class="card-text text-muted">
+                                    <i class="bi bi-calendar3"></i> {{ event.date|date('F j, Y') }}<br>
+                                    <i class="bi bi-geo-alt"></i> {{ event.location }}
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    {% if event.isSoldOut %}
+                                        <span class="badge bg-danger badge-seats">Sold Out</span>
+                                    {% else %}
+                                        <span class="badge bg-success badge-seats">
+                                            {{ event.availableSeats }} seats left
+                                        </span>
+                                    {% endif %}
+                                    <a href="{{ path('event_show', {id: event.id}) }}" class="btn btn-primary btn-sm">
+                                        View Details <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ path('event_index') }}" class="btn btn-outline-primary">
+                    View All Events <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="p-3">
+                    <i class="bi bi-search display-4 text-primary"></i>
+                    <h4 class="mt-3">Discover Events</h4>
+                    <p class="text-muted">Browse through our curated selection of events happening in your area.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="p-3">
+                    <i class="bi bi-ticket-perforated display-4 text-primary"></i>
+                    <h4 class="mt-3">Easy Booking</h4>
+                    <p class="text-muted">Reserve your spot in just a few clicks. Fast, simple, and secure.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="p-3">
+                    <i class="bi bi-shield-check display-4 text-primary"></i>
+                    <h4 class="mt-3">Secure Access</h4>
+                    <p class="text-muted">Your data is protected with modern authentication including Passkeys.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
