@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reserve - {{ event.title }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('home') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('event_index') }}">Events</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('event_show', {id: event.id}) }}">{{ event.title }}</a></li>
+            <li class="breadcrumb-item active">Reserve</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Reservation Form -->
+        <div class="col-lg-7 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-ticket-perforated"></i> Reserve Your Spot
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                        <div class="mb-3">
+                            {{ form_label(form.name) }}
+                            {{ form_widget(form.name) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.email) }}
+                            {{ form_widget(form.email) }}
+                            {{ form_errors(form.email) }}
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> We'll send your confirmation to this email.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.phone) }}
+                            {{ form_widget(form.phone) }}
+                            {{ form_errors(form.phone) }}
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Optional - for event updates.
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Confirm Reservation
+                            </button>
+                            <a href="{{ path('event_show', {id: event.id}) }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Summary -->
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-event"></i> Event Summary
+                    </h5>
+                </div>
+                <div class="event-image-placeholder rounded-0" style="height: 150px;">
+                    <i class="bi bi-calendar-event" style="font-size: 3rem;"></i>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>{{ event.title }}</strong>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-calendar3 text-primary"></i>
+                        {{ event.date|date('l, F j, Y') }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-clock text-primary"></i>
+                        {{ event.date|date('g:i A') }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-geo-alt text-primary"></i>
+                        {{ event.location }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-people text-primary"></i>
+                        <span class="text-success fw-bold">{{ event.availableSeats }}</span>
+                        <span class="text-muted">seats remaining</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info mt-3">
+                <i class="bi bi-shield-check"></i>
+                <strong>Free Registration</strong><br>
+                <small>This event reservation is completely free. No payment required.</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
