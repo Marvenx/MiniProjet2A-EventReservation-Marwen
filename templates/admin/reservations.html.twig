@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reservations - Admin{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <i class="bi bi-speedometer2"></i> Admin Menu
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ path('admin_dashboard') }}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-grid"></i> Dashboard
+                    </a>
+                    <a href="{{ path('admin_event_new') }}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-plus-circle"></i> New Event
+                    </a>
+                    <a href="{{ path('admin_reservations') }}" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-ticket"></i> Reservations
+                    </a>
+                    <a href="{{ path('home') }}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-house"></i> Back to Site
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="bi bi-ticket"></i> All Reservations</h1>
+                <span class="badge bg-primary fs-5">{{ reservations|length }} total</span>
+            </div>
+
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Event</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Reserved At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reservation in reservations %}
+                                <tr>
+                                    <td>{{ reservation.id }}</td>
+                                    <td>
+                                        <a href="{{ path('event_show', {id: reservation.event.id}) }}">
+                                            {{ reservation.event.title }}
+                                        </a>
+                                    </td>
+                                    <td>{{ reservation.name }}</td>
+                                    <td>
+                                        <a href="mailto:{{ reservation.email }}">
+                                            {{ reservation.email }}
+                                        </a>
+                                    </td>
+                                    <td>{{ reservation.phone ?: '-' }}</td>
+                                    <td>{{ reservation.createdAt|date('M j, Y g:i A') }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        No reservations yet.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
