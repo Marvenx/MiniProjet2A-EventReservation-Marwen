@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login - Event Reservation{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign In
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
+
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="inputEmail" class="form-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-envelope"></i>
+                                </span>
+                                <input type="email" 
+                                       name="_username" 
+                                       id="inputEmail" 
+                                       class="form-control" 
+                                       value="{{ last_username }}"
+                                       placeholder="your@email.com"
+                                       required 
+                                       autofocus>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputPassword" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-lock"></i>
+                                </span>
+                                <input type="password" 
+                                       name="_password" 
+                                       id="inputPassword" 
+                                       class="form-control"
+                                       placeholder="••••••••"
+                                       required>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-box-arrow-in-right"></i> Sign In
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="text-muted mb-2">Or sign in with</p>
+                        <button type="button" class="btn btn-outline-dark" id="passkeyBtn" disabled>
+                            <i class="bi bi-fingerprint"></i> Passkey (Coming Soon)
+                        </button>
+                    </div>
+                </div>
+                <div class="card-footer text-center text-muted">
+                    <small>
+                        Demo accounts: admin@example.com / admin123<br>
+                        user@example.com / user123
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
