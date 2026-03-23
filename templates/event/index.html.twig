@@ -18,9 +18,13 @@
             {% for event in events %}
                 <div class="col">
                     <div class="card h-100 event-card">
-                        <div class="event-image-placeholder">
-                            <i class="bi bi-calendar-event"></i>
-                        </div>
+                        {% if event.image %}
+                            <img src="{{ event.image }}" class="card-img-top event-image" alt="{{ event.title }}">
+                        {% else %}
+                            <div class="event-image-placeholder">
+                                <i class="bi bi-calendar-event"></i>
+                            </div>
+                        {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">{{ event.title }}</h5>
                             <p class="card-text">

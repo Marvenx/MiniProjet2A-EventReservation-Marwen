@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #18bc9c; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f9f9f9; }
+        .event-details { background: white; padding: 15px; border-radius: 5px; margin: 15px 0; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+        .label { font-weight: bold; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎫 Reservation Confirmed!</h1>
+        </div>
+        
+        <div class="content">
+            <p>Hello {{ reservation.name }},</p>
+            
+            <p>Your reservation has been successfully confirmed. Here are the details:</p>
+            
+            <div class="event-details">
+                <h2>{{ event.title }}</h2>
+                <p>
+                    <span class="label">📅 Date:</span> {{ event.date|date('l, F j, Y \\a\\t g:i A') }}<br>
+                    <span class="label">📍 Location:</span> {{ event.location }}<br>
+                    <span class="label">👤 Reserved by:</span> {{ reservation.name }}<br>
+                    <span class="label">📧 Email:</span> {{ reservation.email }}<br>
+                    {% if reservation.phone %}
+                    <span class="label">📞 Phone:</span> {{ reservation.phone }}<br>
+                    {% endif %}
+                    <span class="label">🕐 Reserved on:</span> {{ reservation.createdAt|date('F j, Y \\a\\t g:i A') }}
+                </p>
+            </div>
+            
+            <p>Please arrive at least 15 minutes before the event starts.</p>
+            
+            <p>Thank you for using Event Reservation!</p>
+        </div>
+        
+        <div class="footer">
+            <p>Event Reservation System - ISSAT Sousse<br>
+            This is an automated message, please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html>

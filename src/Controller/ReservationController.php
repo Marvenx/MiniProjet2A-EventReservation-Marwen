@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Entity\Reservation;
 use App\Form\ReservationType;
+use App\Service\ReservationMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,8 +15,12 @@ use Symfony\Component\Routing\Attribute\Route;
 class ReservationController extends AbstractController
 {
     #[Route('/events/{id}/reserve', name: 'reservation_new', methods: ['GET', 'POST'])]
-    public function new(Event $event, Request $request, EntityManagerInterface $em): Response
-    {
+    public function new(
+        Event $event, 
+        Request $request, 
+        EntityManagerInterface $em,
+        ReservationMailer $mailer
+    ): Response {
         // Check if event is sold out
         if ($event->isSoldOut()) {
             $this->addFlash('danger', 'Sorry, this event is sold out!');
@@ -39,6 +44,14 @@ class ReservationController extends AbstractController
             
             $em->persist($reservation);
             $em->flush();
+
+            // Send confirmation email
+            try {
+                $mailer->sendConfirmation($reservation);
+            } catch (\Exception $e) {
+                // Log email error but don't fail the reservation
+                // Email might fail in dev without SMTP configured
+            }
 
             $this->addFlash('success', 'Your reservation has been confirmed! Check your email for details.');
             return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
