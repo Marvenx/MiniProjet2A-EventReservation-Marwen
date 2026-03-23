@@ -17,7 +17,7 @@ class EventFixtures extends Fixture
                 'date' => '+2 weeks',
                 'location' => 'Convention Center, Sousse',
                 'seats' => 300,
-                'image' => 'tech-conference.jpg',
+                'image' => 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
             ],
             [
                 'title' => 'Jazz Night Live',
@@ -25,7 +25,7 @@ class EventFixtures extends Fixture
                 'date' => '+3 weeks',
                 'location' => 'Théâtre Municipal, Sousse',
                 'seats' => 150,
-                'image' => 'jazz-night.jpg',
+                'image' => 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=800',
             ],
             [
                 'title' => 'Startup Pitch Competition',
@@ -33,7 +33,7 @@ class EventFixtures extends Fixture
                 'date' => '+1 week',
                 'location' => 'ISSAT Sousse Amphitheater',
                 'seats' => 200,
-                'image' => 'startup-pitch.jpg',
+                'image' => 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
             ],
             [
                 'title' => 'Photography Workshop',
@@ -41,7 +41,7 @@ class EventFixtures extends Fixture
                 'date' => '+4 weeks',
                 'location' => 'Art Gallery, Port El Kantaoui',
                 'seats' => 30,
-                'image' => 'photography-workshop.jpg',
+                'image' => 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800',
             ],
             [
                 'title' => 'Mediterranean Food Festival',
@@ -49,7 +49,7 @@ class EventFixtures extends Fixture
                 'date' => '+5 weeks',
                 'location' => 'Marina Park, Sousse',
                 'seats' => 500,
-                'image' => 'food-festival.jpg',
+                'image' => 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800',
             ],
             [
                 'title' => 'Cybersecurity Summit',
@@ -57,7 +57,7 @@ class EventFixtures extends Fixture
                 'date' => '+6 weeks',
                 'location' => 'Hotel Mövenpick, Sousse',
                 'seats' => 100,
-                'image' => 'cybersecurity-summit.jpg',
+                'image' => 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800',
             ],
             [
                 'title' => 'Classical Music Concert',
@@ -65,7 +65,7 @@ class EventFixtures extends Fixture
                 'date' => '+2 months',
                 'location' => 'Palace of Culture, Sousse',
                 'seats' => 400,
-                'image' => 'classical-concert.jpg',
+                'image' => 'https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=800',
             ],
             [
                 'title' => 'Web Development Bootcamp',
@@ -73,7 +73,7 @@ class EventFixtures extends Fixture
                 'date' => '+3 days',
                 'location' => 'ISSAT Sousse Lab 3',
                 'seats' => 40,
-                'image' => 'web-bootcamp.jpg',
+                'image' => 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800',
             ],
             [
                 'title' => 'Art Exhibition Opening',
@@ -81,7 +81,7 @@ class EventFixtures extends Fixture
                 'date' => '+10 days',
                 'location' => 'Musée Archéologique, Sousse',
                 'seats' => 80,
-                'image' => 'art-exhibition.jpg',
+                'image' => 'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=800',
             ],
             [
                 'title' => 'Business Networking Gala',
@@ -89,7 +89,7 @@ class EventFixtures extends Fixture
                 'date' => '+7 weeks',
                 'location' => 'Sheraton Hotel, Sousse',
                 'seats' => 250,
-                'image' => 'business-gala.jpg',
+                'image' => 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800',
             ],
         ];
 

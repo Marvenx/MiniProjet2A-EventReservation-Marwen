@@ -16,9 +16,13 @@
     <div class="row">
         <!-- Event Image -->
         <div class="col-lg-6 mb-4">
-            <div class="event-image-placeholder rounded" style="height: 350px; font-size: 5rem;">
-                <i class="bi bi-calendar-event"></i>
-            </div>
+            {% if event.image %}
+                <img src="{{ event.image }}" class="img-fluid rounded" alt="{{ event.title }}" style="height: 350px; width: 100%; object-fit: cover;">
+            {% else %}
+                <div class="event-image-placeholder rounded" style="height: 350px; font-size: 5rem;">
+                    <i class="bi bi-calendar-event"></i>
+                </div>
+            {% endif %}
         </div>
 
         <!-- Event Details -->
