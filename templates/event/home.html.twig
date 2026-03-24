@@ -1,40 +1,121 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Welcome - Event Reservation{% endblock %}
+{% block title %}Accueil - EventHub{% endblock %}
 
 {% block body %}
 <!-- Hero Section -->
-<section class="hero-section">
-    <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3">
-            <i class="bi bi-calendar-event"></i> Discover Amazing Events
-        </h1>
-        <p class="lead mb-4">
-            Find and book tickets for the best events in Sousse and beyond.
-            From tech conferences to concerts, we've got you covered.
-        </p>
-        <a href="{{ path('event_index') }}" class="btn btn-light btn-lg">
-            <i class="bi bi-search"></i> Browse All Events
-        </a>
+<section class="hero-gradient py-5">
+    <div class="container py-4 py-lg-5">
+        <div class="row align-items-center">
+            <div class="col-lg-7" data-aos="fade-right">
+                <span class="badge bg-white text-primary fw-600 mb-3 px-3 py-2">
+                    <i class="bi bi-stars me-1"></i>Découvrez les meilleurs événements
+                </span>
+                <h1 class="display-4 fw-800 mb-3" style="line-height: 1.1;">
+                    Trouvez et réservez<br>
+                    <span style="color: var(--accent);">vos événements</span><br>
+                    en quelques clics
+                </h1>
+                <p class="lead opacity-90 mb-4" style="max-width: 500px;">
+                    Des conférences tech aux concerts, découvrez une sélection d'événements à Sousse et ses alentours.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ path('event_index') }}" class="btn btn-accent btn-lg px-4">
+                        <i class="bi bi-search me-2"></i>Explorer les événements
+                    </a>
+                    {% if not app.user %}
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-person me-2"></i>Se connecter
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block" data-aos="fade-left" data-aos-delay="200">
+                <div class="position-relative">
+                    <div class="position-absolute rounded-4" 
+                         style="width: 100%; height: 100%; background: rgba(255,255,255,0.1); transform: rotate(6deg); top: 10px; left: 10px;"></div>
+                    <div class="bg-white rounded-4 p-4 shadow-lg position-relative">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 48px; height: 48px; background: var(--primary);">
+                                <i class="bi bi-calendar-check text-white fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-700 text-dark">Réservation confirmée!</div>
+                                <div class="text-muted small">Il y a 2 minutes</div>
+                            </div>
+                        </div>
+                        <div class="bg-light rounded-3 p-3 mb-3">
+                            <div class="fw-600 text-dark mb-1">Tech Conference 2026</div>
+                            <div class="small text-muted">
+                                <i class="bi bi-calendar3 me-1"></i>15 Avril 2026
+                                <i class="bi bi-geo-alt ms-2 me-1"></i>Sousse
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-success-subtle text-success">Confirmé</span>
+                            <span class="badge bg-primary-subtle text-primary">1 place</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Bar -->
+<section class="bg-white py-4 border-bottom">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-6 col-md-3" data-aos="fade-up">
+                <div class="display-6 fw-800" style="color: var(--primary);">{{ events|length }}</div>
+                <div class="text-muted fw-500">Événements</div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="display-6 fw-800" style="color: var(--accent);">500+</div>
+                <div class="text-muted fw-500">Participants</div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="display-6 fw-800" style="color: #10b981;">100%</div>
+                <div class="text-muted fw-500">Gratuit</div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="display-6 fw-800" style="color: #8b5cf6;">24/7</div>
+                <div class="text-muted fw-500">Réservation</div>
+            </div>
+        </div>
     </div>
 </section>
 
 <!-- Featured Events -->
 <section class="py-5">
     <div class="container">
-        <h2 class="text-center mb-4">
-            <i class="bi bi-star-fill text-warning"></i> Upcoming Events
-        </h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div data-aos="fade-right">
+                <h2 class="fw-800 mb-1">
+                    <i class="bi bi-fire me-2" style="color: var(--accent);"></i>Événements à venir
+                </h2>
+                <p class="text-muted mb-0">Ne manquez pas ces prochains événements</p>
+            </div>
+            <a href="{{ path('event_index') }}" class="btn btn-outline-primary rounded-pill px-4" data-aos="fade-left">
+                Voir tout <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
         
         {% if events is empty %}
-            <div class="alert alert-info text-center">
-                <i class="bi bi-info-circle"></i> No upcoming events at the moment. Check back soon!
+            <div class="text-center py-5" data-aos="fade-up">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                     style="width: 80px; height: 80px; background: #f1f5f9;">
+                    <i class="bi bi-calendar-x fs-1 text-muted"></i>
+                </div>
+                <h5 class="text-muted">Aucun événement pour le moment</h5>
+                <p class="text-muted">Revenez bientôt pour découvrir nos prochains événements!</p>
             </div>
         {% else %}
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                {% for event in events %}
-                    <div class="col">
-                        <div class="card h-100 event-card">
+            <div class="row g-4">
+                {% for event in events|slice(0, 6) %}
+                    <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+                        <div class="card h-100">
                             {% if event.image %}
                                 <img src="{{ event.image }}" class="card-img-top event-image" alt="{{ event.title }}">
                             {% else %}
@@ -42,65 +123,100 @@
                                     <i class="bi bi-calendar-event"></i>
                                 </div>
                             {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ event.title }}</h5>
-                                <p class="card-text text-muted">
-                                    <i class="bi bi-calendar3"></i> {{ event.date|date('F j, Y') }}<br>
-                                    <i class="bi bi-geo-alt"></i> {{ event.location }}
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center">
+                            <div class="card-body d-flex flex-column p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge" style="background: #ede9fe; color: var(--primary);">
+                                        <i class="bi bi-geo-alt me-1"></i>{{ event.location }}
+                                    </span>
                                     {% if event.isSoldOut %}
-                                        <span class="badge bg-danger badge-seats">Sold Out</span>
+                                        <span class="badge bg-danger-subtle text-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Complet
+                                        </span>
                                     {% else %}
-                                        <span class="badge bg-success badge-seats">
-                                            {{ event.availableSeats }} seats left
+                                        <span class="badge bg-success-subtle text-success">
+                                            <i class="bi bi-people me-1"></i>{{ event.availableSeats }} places
                                         </span>
                                     {% endif %}
-                                    <a href="{{ path('event_show', {id: event.id}) }}" class="btn btn-primary btn-sm">
-                                        View Details <i class="bi bi-arrow-right"></i>
-                                    </a>
                                 </div>
+                                <h5 class="card-title fw-700 mb-2">{{ event.title }}</h5>
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-calendar3 me-1" style="color: var(--primary);"></i>
+                                    {{ event.date|date('d/m/Y à H:i') }}
+                                </p>
+                                <p class="card-text text-muted small flex-grow-1">
+                                    {{ event.description|length > 80 ? event.description|slice(0, 80) ~ '...' : event.description }}
+                                </p>
+                                <a href="{{ path('event_show', {id: event.id}) }}" class="btn btn-primary mt-auto">
+                                    <i class="bi bi-arrow-right-circle me-2"></i>Voir les détails
+                                </a>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
-            </div>
-            
-            <div class="text-center mt-4">
-                <a href="{{ path('event_index') }}" class="btn btn-outline-primary">
-                    View All Events <i class="bi bi-arrow-right"></i>
-                </a>
             </div>
         {% endif %}
     </div>
 </section>
 
 <!-- Features Section -->
-<section class="bg-light py-5">
+<section class="py-5" style="background: linear-gradient(180deg, #f8fafc 0%, white 100%);">
     <div class="container">
-        <div class="row text-center">
-            <div class="col-md-4 mb-4">
-                <div class="p-3">
-                    <i class="bi bi-search display-4 text-primary"></i>
-                    <h4 class="mt-3">Discover Events</h4>
-                    <p class="text-muted">Browse through our curated selection of events happening in your area.</p>
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-800 mb-2">Pourquoi EventHub?</h2>
+            <p class="text-muted">Une plateforme simple et efficace pour vos événements</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="card card-static h-100 text-center p-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mx-auto mb-3"
+                         style="width: 72px; height: 72px; background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);">
+                        <i class="bi bi-search fs-2" style="color: var(--primary);"></i>
+                    </div>
+                    <h5 class="fw-700 mb-2">Découvrez</h5>
+                    <p class="text-muted small mb-0">
+                        Parcourez notre sélection d'événements soigneusement organisés dans votre région.
+                    </p>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="p-3">
-                    <i class="bi bi-ticket-perforated display-4 text-primary"></i>
-                    <h4 class="mt-3">Easy Booking</h4>
-                    <p class="text-muted">Reserve your spot in just a few clicks. Fast, simple, and secure.</p>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card card-static h-100 text-center p-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mx-auto mb-3"
+                         style="width: 72px; height: 72px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+                        <i class="bi bi-ticket-perforated fs-2" style="color: var(--accent);"></i>
+                    </div>
+                    <h5 class="fw-700 mb-2">Réservez</h5>
+                    <p class="text-muted small mb-0">
+                        Réservez votre place en quelques clics. Rapide, simple et entièrement gratuit.
+                    </p>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="p-3">
-                    <i class="bi bi-shield-check display-4 text-primary"></i>
-                    <h4 class="mt-3">Secure Access</h4>
-                    <p class="text-muted">Your data is protected with modern authentication including Passkeys.</p>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card card-static h-100 text-center p-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mx-auto mb-3"
+                         style="width: 72px; height: 72px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+                        <i class="bi bi-shield-check fs-2" style="color: #10b981;"></i>
+                    </div>
+                    <h5 class="fw-700 mb-2">Sécurisé</h5>
+                    <p class="text-muted small mb-0">
+                        Authentification moderne avec JWT et Passkeys pour protéger vos données.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- CTA Section -->
+{% if not app.user %}
+<section class="py-5 hero-gradient">
+    <div class="container text-center py-4" data-aos="fade-up">
+        <h2 class="display-6 fw-800 mb-3">Prêt à découvrir les événements?</h2>
+        <p class="lead opacity-90 mb-4">Connectez-vous pour réserver vos places dès maintenant.</p>
+        <a href="{{ path('app_login') }}" class="btn btn-accent btn-lg px-5">
+            <i class="bi bi-rocket-takeoff me-2"></i>Commencer
+        </a>
+    </div>
+</section>
+{% endif %}
 {% endblock %}

@@ -3,47 +3,238 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}Event Reservation{% endblock %}</title>
+        <title>{% block title %}EventHub{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🎫</text></svg>">
         
-        <!-- Bootswatch Flatly Theme -->
-        <link href="https://bootswatch.com/5/flatly/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap 5.3 -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Bootstrap Icons -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+        <!-- Google Fonts: Inter -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <!-- AOS animations -->
+        <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
         
         <style>
-            .hero-section {
-                background: linear-gradient(135deg, #18bc9c 0%, #1abc9c 100%);
+            :root {
+                --primary: #6366f1;
+                --primary-dark: #4f46e5;
+                --primary-light: #818cf8;
+                --accent: #f59e0b;
+                --accent-dark: #d97706;
+                --surface: #f8fafc;
+                --surface-dark: #1e293b;
+                --card-shadow: 0 4px 24px rgba(99,102,241,0.08);
+                --card-shadow-hover: 0 12px 32px rgba(99,102,241,0.15);
+                --radius: 16px;
+                --radius-sm: 10px;
+            }
+
+            * { font-family: 'Inter', sans-serif; }
+
+            body { 
+                background: var(--surface); 
+                color: #1e293b;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Buttons */
+            .btn-primary {
+                background: var(--primary);
+                border: none;
+                border-radius: var(--radius-sm);
+                font-weight: 600;
+                padding: 0.6rem 1.4rem;
+                transition: all 0.2s ease;
+            }
+            .btn-primary:hover {
+                background: var(--primary-dark);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+            }
+
+            .btn-accent {
+                background: var(--accent);
+                border: none;
+                border-radius: var(--radius-sm);
+                font-weight: 600;
                 color: white;
-                padding: 4rem 0;
+                padding: 0.6rem 1.4rem;
+                transition: all 0.2s ease;
             }
-            .event-card {
-                transition: transform 0.2s, box-shadow 0.2s;
+            .btn-accent:hover {
+                background: var(--accent-dark);
+                color: white;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 14px rgba(245,158,11,0.35);
             }
-            .event-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+
+            /* Cards */
+            .card {
+                border: none;
+                border-radius: var(--radius);
+                box-shadow: var(--card-shadow);
+                transition: transform 0.25s ease, box-shadow 0.25s ease;
+                overflow: hidden;
             }
+            .card:hover {
+                transform: translateY(-4px);
+                box-shadow: var(--card-shadow-hover);
+            }
+            .card-static:hover {
+                transform: none;
+                box-shadow: var(--card-shadow);
+            }
+
+            /* Navbar - Glassmorphism */
+            .navbar {
+                background: rgba(255,255,255,0.85) !important;
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-bottom: 1px solid #e2e8f0;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+                padding: 0.8rem 0;
+            }
+            .navbar-brand { 
+                font-weight: 800; 
+                font-size: 1.35rem; 
+                color: var(--primary) !important;
+                letter-spacing: -0.5px;
+            }
+            .navbar-brand i {
+                color: var(--accent);
+            }
+            .nav-link {
+                font-weight: 500;
+                color: #475569 !important;
+                padding: 0.5rem 1rem !important;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+            .nav-link:hover {
+                color: var(--primary) !important;
+                background: rgba(99,102,241,0.08);
+            }
+
+            /* Badges */
+            .badge { 
+                border-radius: 8px; 
+                font-weight: 600;
+                padding: 0.5em 0.8em;
+            }
+
+            /* Forms */
+            input.form-control, textarea.form-control, select.form-select {
+                border-radius: var(--radius-sm);
+                border: 1.5px solid #e2e8f0;
+                padding: 0.7rem 1rem;
+                transition: border-color 0.2s, box-shadow 0.2s;
+                font-size: 0.95rem;
+            }
+            input.form-control:focus, textarea.form-control:focus, select.form-select:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+            }
+            .form-label {
+                font-weight: 600;
+                font-size: 0.875rem;
+                color: #374151;
+                margin-bottom: 0.4rem;
+            }
+            .input-group-text {
+                border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+                border: 1.5px solid #e2e8f0;
+                border-right: none;
+                background: #f8fafc;
+            }
+            .input-group .form-control {
+                border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            }
+
+            /* Hero sections */
+            .hero-gradient {
+                background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+                color: white;
+            }
+
+            /* Event cards */
             .event-image {
                 height: 200px;
                 object-fit: cover;
-                background-color: #ecf0f1;
             }
             .event-image-placeholder {
                 height: 200px;
-                background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+                background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 color: white;
                 font-size: 3rem;
             }
-            footer {
-                background-color: #2c3e50;
-                color: #ecf0f1;
+
+            /* Tables */
+            .table { margin-bottom: 0; }
+            .table th { 
+                font-weight: 600; 
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: #64748b;
             }
-            .badge-seats {
-                font-size: 0.85rem;
+            .table-dark th { color: #e2e8f0; }
+
+            /* Alerts */
+            .alert {
+                border: none;
+                border-radius: var(--radius-sm);
+            }
+
+            /* Footer */
+            footer {
+                background: var(--surface-dark);
+                color: #94a3b8;
+                margin-top: auto;
+            }
+            footer a { 
+                color: #94a3b8; 
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+            footer a:hover { color: white; }
+
+            /* Utility classes */
+            .fw-800 { font-weight: 800; }
+            .fw-700 { font-weight: 700; }
+            .fw-600 { font-weight: 600; }
+            .fw-500 { font-weight: 500; }
+            .text-primary { color: var(--primary) !important; }
+            .bg-primary { background-color: var(--primary) !important; }
+            .rounded-xl { border-radius: var(--radius); }
+            .rounded-lg { border-radius: var(--radius-sm); }
+
+            /* Admin sidebar */
+            .admin-sidebar {
+                background: var(--surface-dark);
+                min-height: calc(100vh - 76px);
+                position: sticky;
+                top: 76px;
+            }
+            .admin-sidebar .nav-link {
+                color: #94a3b8 !important;
+                padding: 0.75rem 1.25rem !important;
+                border-radius: 0;
+                border-left: 3px solid transparent;
+            }
+            .admin-sidebar .nav-link:hover,
+            .admin-sidebar .nav-link.active {
+                color: white !important;
+                background: rgba(99,102,241,0.15);
+                border-left-color: var(--primary);
+            }
+            .admin-sidebar .nav-link i {
+                width: 24px;
             }
         </style>
         
@@ -51,56 +242,58 @@
     </head>
     <body>
         <!-- Navigation -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <nav class="navbar navbar-expand-lg sticky-top">
             <div class="container">
-                <a class="navbar-brand" href="{{ path('home') }}">
-                    <i class="bi bi-calendar-event"></i> Event Reservation
+                <a class="navbar-brand d-flex align-items-center gap-2" href="{{ path('home') }}">
+                    <i class="bi bi-calendar-event-fill"></i>
+                    <span>EventHub</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('home') }}">
-                                <i class="bi bi-house"></i> Home
-                            </a>
-                        </li>
+                <div class="collapse navbar-collapse" id="navMain">
+                    <ul class="navbar-nav ms-auto align-items-center gap-1">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('event_index') }}">
-                                <i class="bi bi-calendar3"></i> Events
+                                <i class="bi bi-calendar3 me-1"></i>Événements
                             </a>
                         </li>
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ path('admin_dashboard') }}">
-                                    <i class="bi bi-speedometer2"></i> Admin
+                                    <i class="bi bi-speedometer2 me-1"></i>Admin
                                 </a>
                             </li>
                         {% endif %}
-                    </ul>
-                    <ul class="navbar-nav">
+                        
                         {% if app.user %}
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-person-circle"></i> {{ app.user.email }}
+                            <li class="nav-item dropdown ms-2">
+                                <a class="btn btn-outline-secondary btn-sm rounded-pill px-3 dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-person-circle me-1"></i>{{ app.user.email|split('@')[0] }}
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-lg mt-2">
+                                    <li class="px-3 py-2 border-bottom">
+                                        <small class="text-muted">Connecté en tant que</small>
+                                        <div class="fw-600 text-truncate" style="max-width: 180px;">{{ app.user.email }}</div>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <span class="badge bg-danger mt-1">Admin</span>
+                                        {% endif %}
+                                    </li>
                                     {% if is_granted('ROLE_ADMIN') %}
-                                        <li><a class="dropdown-item" href="{{ path('app_register') }}">
-                                            <i class="bi bi-person-plus"></i> Register Admin
+                                        <li><a class="dropdown-item py-2" href="{{ path('app_register') }}">
+                                            <i class="bi bi-person-plus me-2 text-primary"></i>Créer un Admin
                                         </a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li><hr class="dropdown-divider my-1"></li>
                                     {% endif %}
-                                    <li><a class="dropdown-item" href="{{ path('app_logout') }}">
-                                        <i class="bi bi-box-arrow-right"></i> Logout
+                                    <li><a class="dropdown-item py-2 text-danger" href="{{ path('app_logout') }}">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
                                     </a></li>
                                 </ul>
                             </li>
                         {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_login') }}">
-                                    <i class="bi bi-box-arrow-in-right"></i> Login
+                            <li class="nav-item ms-2">
+                                <a class="btn btn-primary btn-sm rounded-pill px-3" href="{{ path('app_login') }}">
+                                    <i class="bi bi-person-fill me-1"></i>Connexion
                                 </a>
                             </li>
                         {% endif %}
@@ -110,52 +303,65 @@
         </nav>
 
         <!-- Flash Messages -->
-        <div class="container mt-3">
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ type == 'success' ? 'success' : (type == 'error' ? 'danger' : type) }} alert-dismissible fade show mx-3 mt-3 d-flex align-items-center gap-2" role="alert" data-aos="fade-down">
+                    <i class="bi bi-{{ type == 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill' }} fs-5"></i>
+                    <span>{{ message }}</span>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                </div>
             {% endfor %}
-        </div>
+        {% endfor %}
 
         <!-- Main Content -->
         {% block body %}{% endblock %}
 
         <!-- Footer -->
-        <footer class="py-4 mt-5">
+        <footer class="py-5 mt-auto">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5><i class="bi bi-calendar-event"></i> Event Reservation</h5>
-                        <p class="text-muted">Your premier destination for event discovery and booking.</p>
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <h5 class="text-white fw-700 mb-3">
+                            <i class="bi bi-calendar-event-fill me-2" style="color: var(--accent);"></i>EventHub
+                        </h5>
+                        <p class="mb-0">Votre destination pour découvrir et réserver les meilleurs événements.</p>
                     </div>
-                    <div class="col-md-3">
-                        <h6>Quick Links</h6>
-                        <ul class="list-unstyled">
-                            <li><a href="{{ path('home') }}" class="text-muted">Home</a></li>
-                            <li><a href="{{ path('event_index') }}" class="text-muted">Events</a></li>
+                    <div class="col-lg-2">
+                        <h6 class="text-white fw-600 mb-3">Navigation</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><a href="{{ path('home') }}"><i class="bi bi-chevron-right me-1"></i>Accueil</a></li>
+                            <li class="mb-2"><a href="{{ path('event_index') }}"><i class="bi bi-chevron-right me-1"></i>Événements</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-3">
-                        <h6>Contact</h6>
-                        <p class="text-muted small">
-                            ISSAT Sousse<br>
-                            FIA3-GL 2025/2026
-                        </p>
+                    <div class="col-lg-3">
+                        <h6 class="text-white fw-600 mb-3">Contact</h6>
+                        <p class="mb-1"><i class="bi bi-geo-alt me-2"></i>ISSAT Sousse</p>
+                        <p class="mb-0"><i class="bi bi-mortarboard me-2"></i>FIA3-GL 2025/2026</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <h6 class="text-white fw-600 mb-3">Technologies</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-dark">Symfony 7</span>
+                            <span class="badge bg-dark">PostgreSQL</span>
+                            <span class="badge bg-dark">JWT</span>
+                            <span class="badge bg-dark">Passkeys</span>
+                        </div>
                     </div>
                 </div>
-                <hr class="my-3" style="border-color: #34495e;">
-                <p class="text-center text-muted small mb-0">
-                    &copy; {{ "now"|date("Y") }} Event Reservation System. Built with Symfony.
+                <hr class="my-4" style="border-color: #334155;">
+                <p class="text-center mb-0">
+                    © {{ "now"|date("Y") }} EventHub — ISSAT Sousse
+                    <span class="mx-2">·</span>
+                    Développé avec <i class="bi bi-heart-fill text-danger"></i> en Symfony 7
                 </p>
             </div>
         </footer>
 
         <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- AOS -->
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <script>AOS.init({ duration: 600, once: true, offset: 50 });</script>
         
         {% block javascripts %}{% endblock %}
     </body>

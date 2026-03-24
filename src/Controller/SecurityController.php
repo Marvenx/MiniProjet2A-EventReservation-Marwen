@@ -31,6 +31,25 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    #[Route('/admin/login', name: 'app_admin_login')]
+    public function adminLogin(AuthenticationUtils $authenticationUtils): Response
+    {
+        if ($this->getUser()) {
+            if ($this->isGranted('ROLE_ADMIN')) {
+                return $this->redirectToRoute('admin_dashboard');
+            }
+            return $this->redirectToRoute('home');
+        }
+
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('security/admin_login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
+    }
+
     #[Route('/admin/register', name: 'app_register')]
     public function register(
         Request $request,
