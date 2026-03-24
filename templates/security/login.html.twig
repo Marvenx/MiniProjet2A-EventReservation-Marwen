@@ -1,48 +1,73 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Login - Event Reservation{% endblock %}
+{% block title %}Connexion - EventHub{% endblock %}
 
 {% block body %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4 class="mb-0">
-                        <i class="bi bi-box-arrow-in-right"></i> Sign In
-                    </h4>
-                </div>
-                <div class="card-body p-4">
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-5"
+     style="background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <div class="card card-static p-4 p-md-5" style="border-top: 4px solid var(--primary);" data-aos="fade-up">
+                    
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                             style="width: 64px; height: 64px; background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);">
+                            <i class="bi bi-shield-lock-fill fs-3" style="color: var(--primary);"></i>
+                        </div>
+                        <h4 class="fw-800 mb-1">Connexion sécurisée</h4>
+                        <p class="text-muted small mb-0">Entrez vos identifiants ou utilisez votre Passkey</p>
+                    </div>
+
                     {% if error %}
-                        <div class="alert alert-danger">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        <div class="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>{{ error.messageKey|trans(error.messageData, 'security') }}</span>
                         </div>
                     {% endif %}
 
+                    <!-- Passkey Button -->
+                    <button id="passkeyLoginBtn" 
+                            class="btn w-100 mb-3 fw-600 d-flex align-items-center justify-content-center gap-2"
+                            style="background: #1e293b; color: white; border-radius: 10px; padding: 0.85rem;"
+                            disabled>
+                        <i class="bi bi-fingerprint fs-5"></i> 
+                        <span>Se connecter avec Passkey</span>
+                        <span class="badge bg-secondary ms-1">Bientôt</span>
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="d-flex align-items-center gap-3 my-3">
+                        <hr class="flex-grow-1 m-0">
+                        <span class="text-muted small fw-500">ou par email</span>
+                        <hr class="flex-grow-1 m-0">
+                    </div>
+
+                    <!-- Login Form -->
                     <form method="post">
                         <div class="mb-3">
-                            <label for="inputEmail" class="form-label">Email</label>
+                            <label for="inputEmail" class="form-label">Adresse email</label>
                             <div class="input-group">
                                 <span class="input-group-text">
-                                    <i class="bi bi-envelope"></i>
+                                    <i class="bi bi-envelope text-muted"></i>
                                 </span>
                                 <input type="email" 
                                        name="_username" 
                                        id="inputEmail" 
                                        class="form-control" 
                                        value="{{ last_username }}"
-                                       placeholder="your@email.com"
+                                       placeholder="vous@exemple.com"
                                        required 
                                        autofocus>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="inputPassword" class="form-label">Password</label>
+                        <div class="mb-4">
+                            <label for="inputPassword" class="form-label">Mot de passe</label>
                             <div class="input-group">
                                 <span class="input-group-text">
-                                    <i class="bi bi-lock"></i>
+                                    <i class="bi bi-lock text-muted"></i>
                                 </span>
                                 <input type="password" 
                                        name="_password" 
@@ -55,36 +80,26 @@
 
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-box-arrow-in-right"></i> Sign In
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-primary w-100 fw-600 py-2 mb-3">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                        </button>
                     </form>
 
-                    <hr class="my-4">
-
-                    <div class="text-center">
-                        <p class="text-muted mb-2">Or sign in with</p>
-                        <button type="button" class="btn btn-outline-dark" id="passkeyBtn" disabled>
-                            <i class="bi bi-fingerprint"></i> Passkey (Coming Soon)
-                        </button>
-                    </div>
-
-                    <hr class="my-4">
-
-                    <div class="text-center">
-                        <p class="text-muted mb-0">Don't have an account?</p>
-                        <a href="{{ path('app_register') }}" class="btn btn-outline-success mt-2">
-                            <i class="bi bi-person-plus"></i> Create Account
+                    <!-- Admin Login Link -->
+                    <div class="text-center pt-3 border-top">
+                        <p class="text-muted small mb-2">Vous êtes administrateur ?</p>
+                        <a href="{{ path('app_admin_login') }}" class="btn btn-outline-danger btn-sm rounded-pill px-4">
+                            <i class="bi bi-shield-lock me-1"></i>Connexion Admin
                         </a>
                     </div>
                 </div>
-                <div class="card-footer text-center text-muted">
-                    <small>
-                        Demo accounts: admin@example.com / admin123<br>
-                        user@example.com / user123
-                    </small>
+
+                <!-- Demo Accounts Info -->
+                <div class="text-center mt-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="d-inline-block bg-white rounded-lg px-4 py-3 shadow-sm">
+                        <p class="small text-muted mb-1"><i class="bi bi-info-circle me-1"></i>Comptes de démonstration</p>
+                        <code class="small">user@example.com</code> / <code class="small">user123</code>
+                    </div>
                 </div>
             </div>
         </div>
