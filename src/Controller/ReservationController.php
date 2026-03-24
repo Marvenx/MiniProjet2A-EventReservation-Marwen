@@ -39,8 +39,6 @@ class ReservationController extends AbstractController
                 $this->addFlash('danger', 'Sorry, this event just sold out!');
                 return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
             }
-
-            $reservation->setCreatedAt(new \DateTimeImmutable());
             
             $em->persist($reservation);
             $em->flush();
