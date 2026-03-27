@@ -1,1 +1,1 @@
-Write-Host 'Starting Docker...'; docker-compose up -d
+Write-Host 'Starting...'; docker compose up -d
