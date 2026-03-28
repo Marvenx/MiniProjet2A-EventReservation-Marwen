@@ -71,6 +71,13 @@
                                 <i class="bi bi-calendar3"></i> Events
                             </a>
                         </li>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('admin_dashboard') }}">
+                                    <i class="bi bi-speedometer2"></i> Admin
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
                     {# Auth navigation - routes will be added in Phase 8 #}
                     <ul class="navbar-nav">
