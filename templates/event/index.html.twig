@@ -1,69 +1,127 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}All Events - Event Reservation{% endblock %}
+{% block title %}Événements - EventHub{% endblock %}
 
 {% block body %}
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="bi bi-calendar3"></i> All Events</h1>
-        <span class="badge bg-primary fs-6">{{ events|length }} events</span>
-    </div>
-
-    {% if events is empty %}
-        <div class="alert alert-info text-center">
-            <i class="bi bi-info-circle"></i> No events available at the moment.
+<!-- Hero Section -->
+<section class="hero-gradient py-5">
+    <div class="container py-3" data-aos="fade-up">
+        <div class="text-center">
+            <h1 class="display-5 fw-800 mb-3">Découvrez nos Événements</h1>
+            <p class="lead opacity-75 mb-4">Réservez votre place en quelques clics</p>
+            <div class="input-group mx-auto" style="max-width: 500px;">
+                <input type="text" 
+                       class="form-control form-control-lg border-0" 
+                       style="border-radius: 50px 0 0 50px; padding-left: 1.5rem;"
+                       placeholder="Rechercher un événement..."
+                       id="eventSearch">
+                <button class="btn btn-accent px-4" style="border-radius: 0 50px 50px 0;">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
         </div>
-    {% else %}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {% for event in events %}
-                <div class="col">
-                    <div class="card h-100 event-card">
-                        {% if event.image %}
-                            <img src="{{ event.image }}" class="card-img-top event-image" alt="{{ event.title }}">
-                        {% else %}
-                            <div class="event-image-placeholder">
-                                <i class="bi bi-calendar-event"></i>
-                            </div>
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ event.title }}</h5>
-                            <p class="card-text">
-                                {{ event.description|length > 100 ? event.description|slice(0, 100) ~ '...' : event.description }}
-                            </p>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <i class="bi bi-calendar3 text-primary"></i>
-                                {{ event.date|date('l, F j, Y') }}
-                            </li>
-                            <li class="list-group-item">
-                                <i class="bi bi-clock text-primary"></i>
-                                {{ event.date|date('g:i A') }}
-                            </li>
-                            <li class="list-group-item">
-                                <i class="bi bi-geo-alt text-primary"></i>
-                                {{ event.location }}
-                            </li>
-                            <li class="list-group-item">
-                                <i class="bi bi-people text-primary"></i>
-                                {% if event.isSoldOut %}
-                                    <span class="text-danger fw-bold">Sold Out</span>
-                                {% else %}
-                                    <span class="text-success">{{ event.availableSeats }} / {{ event.seats }} seats available</span>
-                                {% endif %}
-                            </li>
-                        </ul>
-                        <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <a href="{{ path('event_show', {id: event.id}) }}" class="btn btn-primary">
-                                    <i class="bi bi-eye"></i> View Details
+    </div>
+</section>
+
+<!-- Events Grid -->
+<section class="py-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-up">
+            <div>
+                <h2 class="fw-700 mb-1">Tous les événements</h2>
+                <p class="text-muted mb-0">{{ events|length }} événement{{ events|length > 1 ? 's' : '' }} disponible{{ events|length > 1 ? 's' : '' }}</p>
+            </div>
+            <span class="badge bg-primary fs-6 px-3 py-2">
+                <i class="bi bi-calendar3 me-1"></i>{{ events|length }}
+            </span>
+        </div>
+
+        {% if events is empty %}
+            <div class="text-center py-5" data-aos="fade-up">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-4"
+                     style="width: 100px; height: 100px; background: #f1f5f9;">
+                    <i class="bi bi-calendar-x" style="font-size: 3rem; color: #94a3b8;"></i>
+                </div>
+                <h4 class="text-muted fw-600">Aucun événement disponible</h4>
+                <p class="text-muted">Revenez bientôt pour découvrir nos prochains événements!</p>
+                <a href="{{ path('home') }}" class="btn btn-primary mt-2">
+                    <i class="bi bi-house me-2"></i>Retour à l'accueil
+                </a>
+            </div>
+        {% else %}
+            <div class="row g-4" id="eventsGrid">
+                {% for event in events %}
+                    <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 50 }}">
+                        <div class="card h-100 event-card">
+                            {% if event.image %}
+                                <img src="{{ event.image }}" class="card-img-top event-image" alt="{{ event.title }}"
+                                     style="border-radius: 16px 16px 0 0;">
+                            {% else %}
+                                <div class="event-image-placeholder" style="border-radius: 16px 16px 0 0;">
+                                    <i class="bi bi-calendar-event"></i>
+                                </div>
+                            {% endif %}
+                            <div class="card-body d-flex flex-column p-4">
+                                <!-- Badges -->
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <span class="badge" style="background: #ede9fe; color: var(--primary);">
+                                        <i class="bi bi-geo-alt me-1"></i>{{ event.location }}
+                                    </span>
+                                    {% if event.isSoldOut %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Complet
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-success-subtle text-success">
+                                            <i class="bi bi-people me-1"></i>{{ event.availableSeats }} / {{ event.seats }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Title -->
+                                <h5 class="card-title fw-700 mb-2">{{ event.title }}</h5>
+
+                                <!-- Date & Time -->
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center text-muted small mb-1">
+                                        <i class="bi bi-calendar3 me-2" style="color: var(--primary);"></i>
+                                        {{ event.date|date('l d F Y') }}
+                                    </div>
+                                    <div class="d-flex align-items-center text-muted small">
+                                        <i class="bi bi-clock me-2" style="color: var(--primary);"></i>
+                                        {{ event.date|date('H:i') }}
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <p class="card-text text-muted small flex-grow-1">
+                                    {{ event.description|length > 100 ? event.description|slice(0, 100) ~ '...' : event.description }}
+                                </p>
+
+                                <!-- CTA Button -->
+                                <a href="{{ path('event_show', {id: event.id}) }}" class="btn btn-primary w-100 mt-auto">
+                                    <i class="bi bi-eye me-2"></i>Voir les détails
                                 </a>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.getElementById('eventSearch')?.addEventListener('input', function(e) {
+    const search = e.target.value.toLowerCase();
+    document.querySelectorAll('#eventsGrid .col-md-6').forEach(card => {
+        const title = card.querySelector('.card-title').textContent.toLowerCase();
+        const location = card.querySelector('.badge').textContent.toLowerCase();
+        card.style.display = (title.includes(search) || location.includes(search)) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}

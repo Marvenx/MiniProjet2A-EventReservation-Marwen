@@ -40,14 +40,14 @@ class AdminController extends AbstractController
             $em->persist($event);
             $em->flush();
 
-            $this->addFlash('success', 'Event created successfully!');
+            $this->addFlash('success', 'Événement créé avec succès!');
             return $this->redirectToRoute('admin_dashboard');
         }
 
         return $this->render('admin/event_form.html.twig', [
             'form' => $form,
             'event' => $event,
-            'action' => 'Create',
+            'action' => 'Créer',
         ]);
     }
 
@@ -60,14 +60,14 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
 
-            $this->addFlash('success', 'Event updated successfully!');
+            $this->addFlash('success', 'Événement mis à jour avec succès!');
             return $this->redirectToRoute('admin_dashboard');
         }
 
         return $this->render('admin/event_form.html.twig', [
             'form' => $form,
             'event' => $event,
-            'action' => 'Edit',
+            'action' => 'Modifier',
         ]);
     }
 
@@ -78,7 +78,7 @@ class AdminController extends AbstractController
             $em->remove($event);
             $em->flush();
 
-            $this->addFlash('success', 'Event deleted successfully!');
+            $this->addFlash('success', 'Événement supprimé avec succès!');
         }
 
         return $this->redirectToRoute('admin_dashboard');

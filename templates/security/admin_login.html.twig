@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion Admin - EventHub{% endblock %}
+
+{% block body %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-5"
+     style="background: linear-gradient(135deg, #fef2f2 0%, #fce7f3 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <div class="card card-static p-4 p-md-5" style="border-top: 4px solid #dc2626;" data-aos="fade-up">
+                    
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                             style="width: 64px; height: 64px; background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);">
+                            <i class="bi bi-shield-fill-exclamation fs-3 text-danger"></i>
+                        </div>
+                        <h4 class="fw-800 mb-1">Espace Administrateur</h4>
+                        <p class="text-muted small mb-0">Accès réservé aux administrateurs</p>
+                    </div>
+
+                    <!-- Warning Badge -->
+                    <div class="alert alert-warning d-flex align-items-start gap-2 py-2 mb-4" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+                        <small>Cette connexion donne accès au panneau d'administration complet.</small>
+                    </div>
+
+                    {% if error %}
+                        <div class="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>{{ error.messageKey|trans(error.messageData, 'security') }}</span>
+                        </div>
+                    {% endif %}
+
+                    <!-- Login Form -->
+                    <form method="post" action="{{ path('app_admin_login') }}">
+                        <div class="mb-3">
+                            <label for="inputEmail" class="form-label">Email administrateur</label>
+                            <div class="input-group">
+                                <span class="input-group-text" style="border-color: #fecaca;">
+                                    <i class="bi bi-envelope text-danger"></i>
+                                </span>
+                                <input type="email" 
+                                       name="_username" 
+                                       id="inputEmail" 
+                                       class="form-control" 
+                                       style="border-color: #fecaca;"
+                                       value="{{ last_username }}"
+                                       placeholder="admin@exemple.com"
+                                       required 
+                                       autofocus>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="inputPassword" class="form-label">Mot de passe</label>
+                            <div class="input-group">
+                                <span class="input-group-text" style="border-color: #fecaca;">
+                                    <i class="bi bi-lock text-danger"></i>
+                                </span>
+                                <input type="password" 
+                                       name="_password" 
+                                       id="inputPassword" 
+                                       class="form-control"
+                                       style="border-color: #fecaca;"
+                                       placeholder="••••••••"
+                                       required>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                        <button type="submit" class="btn btn-danger w-100 fw-600 py-2 mb-3">
+                            <i class="bi bi-shield-lock me-2"></i>Accéder au panneau Admin
+                        </button>
+                    </form>
+
+                    <!-- Back to User Login -->
+                    <div class="text-center pt-3 border-top">
+                        <p class="text-muted small mb-2">Vous n'êtes pas administrateur ?</p>
+                        <a href="{{ path('app_login') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-4">
+                            <i class="bi bi-arrow-left me-1"></i>Connexion utilisateur
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Demo Admin Account -->
+                <div class="text-center mt-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="d-inline-block bg-white rounded-lg px-4 py-3 shadow-sm">
+                        <p class="small text-muted mb-1"><i class="bi bi-info-circle me-1"></i>Compte admin de démonstration</p>
+                        <code class="small">admin@example.com</code> / <code class="small">admin123</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

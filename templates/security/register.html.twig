@@ -1,70 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register Admin - Event Reservation{% endblock %}
+{% block title %}Créer un Admin - EventHub{% endblock %}
 
 {% block body %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-header bg-danger text-white text-center">
-                    <h4 class="mb-0">
-                        <i class="bi bi-shield-lock"></i> Create Admin Account
-                    </h4>
-                </div>
-                <div class="card-body p-4">
-                    <div class="alert alert-warning mb-4">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <strong>Admin Only:</strong> This registration creates an administrator account with full system access.
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-5"
+     style="background: linear-gradient(135deg, #fef2f2 0%, #fce7f3 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <div class="card card-static p-4 p-md-5" style="border-top: 4px solid #dc2626;" data-aos="fade-up">
+                    
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                             style="width: 64px; height: 64px; background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);">
+                            <i class="bi bi-person-fill-gear fs-3 text-danger"></i>
+                        </div>
+                        <h4 class="fw-800 mb-1">Créer un Administrateur</h4>
+                        <p class="text-muted small mb-0">Ajoutez un nouveau compte admin au système</p>
+                    </div>
+
+                    <!-- Warning Badge -->
+                    <div class="alert alert-warning d-flex align-items-start gap-2 py-2 mb-4" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+                        <small><strong>Attention :</strong> Ce compte aura un accès complet au système incluant la gestion des événements et réservations.</small>
                     </div>
 
                     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
                         <div class="mb-3">
-                            {{ form_label(form.email) }}
+                            <label class="form-label">Email du nouvel admin</label>
                             <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-envelope"></i>
+                                <span class="input-group-text" style="border-color: #fecaca;">
+                                    <i class="bi bi-envelope text-danger"></i>
                                 </span>
-                                {{ form_widget(form.email) }}
+                                {{ form_widget(form.email, {'attr': {'class': 'form-control', 'style': 'border-color: #fecaca;', 'placeholder': 'admin@exemple.com'}}) }}
                             </div>
                             {{ form_errors(form.email) }}
                         </div>
 
                         <div class="mb-3">
-                            {{ form_label(form.plainPassword.first) }}
+                            <label class="form-label">Mot de passe</label>
                             <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-lock"></i>
+                                <span class="input-group-text" style="border-color: #fecaca;">
+                                    <i class="bi bi-lock text-danger"></i>
                                 </span>
-                                {{ form_widget(form.plainPassword.first) }}
+                                {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'style': 'border-color: #fecaca;', 'placeholder': 'Minimum 6 caractères'}}) }}
                             </div>
                             {{ form_errors(form.plainPassword.first) }}
                         </div>
 
-                        <div class="mb-3">
-                            {{ form_label(form.plainPassword.second) }}
+                        <div class="mb-4">
+                            <label class="form-label">Confirmer le mot de passe</label>
                             <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-lock-fill"></i>
+                                <span class="input-group-text" style="border-color: #fecaca;">
+                                    <i class="bi bi-lock-fill text-danger"></i>
                                 </span>
-                                {{ form_widget(form.plainPassword.second) }}
+                                {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'style': 'border-color: #fecaca;', 'placeholder': 'Répétez le mot de passe'}}) }}
                             </div>
                             {{ form_errors(form.plainPassword.second) }}
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-danger btn-lg">
-                                <i class="bi bi-shield-plus"></i> Create Admin Account
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-danger w-100 fw-600 py-2 mb-3">
+                            <i class="bi bi-shield-plus me-2"></i>Créer le compte Admin
+                        </button>
                     {{ form_end(form) }}
 
-                    <hr class="my-4">
-
-                    <div class="text-center">
-                        <a href="{{ path('admin_dashboard') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Back to Dashboard
+                    <!-- Back Button -->
+                    <div class="text-center pt-3 border-top">
+                        <a href="{{ path('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-4">
+                            <i class="bi bi-arrow-left me-1"></i>Retour au Dashboard
                         </a>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="text-center mt-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="d-inline-block bg-white rounded-lg px-4 py-3 shadow-sm">
+                        <p class="small text-muted mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Connecté en tant que <strong>{{ app.user.email }}</strong>
+                        </p>
                     </div>
                 </div>
             </div>
