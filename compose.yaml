@@ -1,23 +1,95 @@
+version: '3.8'
 
 services:
+  ###> PHP Application ###
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: symfony_php
+    environment:
+      - APP_ENV=${APP_ENV:-dev}
+      - APP_DEBUG=${APP_DEBUG:-1}
+      - APP_SECRET=${APP_SECRET}
+      - JWT_PASSPHRASE=${JWT_PASSPHRASE}
+      - JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+      - JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+      - APP_DOMAIN=${APP_DOMAIN:-localhost}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-marwen2003}@database:5432/${POSTGRES_DB:-event_reservation}?serverVersion=15&charset=utf8
+      - MAILER_DSN=${MAILER_DSN}
+    volumes:
+      - ./:/var/www/html:rw
+      - ./config/jwt:/var/www/html/config/jwt:ro
+      - ./var:/var/www/html/var:rw
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "php", "-r", "file_get_contents('http://localhost:9000/health');"]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+  ###< PHP Application ###
+
+  ###> Nginx Web Server ###
+  nginx:
+    image: nginx:alpine
+    container_name: symfony_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/html/public:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      php:
+        condition: service_healthy
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  ###< Nginx Web Server ###
+
 ###> doctrine/doctrine-bundle ###
   database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    image: postgres:${POSTGRES_VERSION:-15}-alpine
+    container_name: symfony_database
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_DB: ${POSTGRES_DB:-event_reservation}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-marwen2003}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
     healthcheck:
-      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}"]
+      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-event_reservation}", "-U", "${POSTGRES_USER:-postgres}"]
       timeout: 5s
       retries: 5
       start_period: 60s
     volumes:
       - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
+    networks:
+      - app_network
 ###< doctrine/doctrine-bundle ###
+
+###> symfony/mailer ###
+  mailer:
+    image: axllent/mailpit
+    container_name: symfony_mailer
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      - app_network
+###< symfony/mailer ###
+
+networks:
+  app_network:
+    driver: bridge
 
 volumes:
 ###> doctrine/doctrine-bundle ###
