@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.4-fpm
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
     curl \
     && docker-php-ext-install pdo pdo_pgsql opcache zip \
     && rm -rf /var/lib/apt/lists/*
+
+# Configure git to accept dubious ownership (Windows COPY issue)
+RUN git config --global --add safe.directory /var/www/html
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
