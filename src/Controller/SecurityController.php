@@ -52,8 +52,44 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/register', name: 'app_register')]
+    #[Route('/register', name: 'app_register')]
     public function register(
+        Request $request,
+        UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $em,
+        Security $security
+    ): Response {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('home');
+        }
+
+        $user = new User();
+        $form = $this->createForm(RegistrationType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $hashedPassword = $passwordHasher->hashPassword(
+                $user,
+                $form->get('plainPassword')->getData()
+            );
+            $user->setPassword($hashedPassword);
+            $user->setRoles(['ROLE_USER']);
+
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Account created successfully! Please log in.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('security/user_register.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/admin/register', name: 'app_admin_register')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function registerAdmin(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $em,
@@ -73,9 +109,6 @@ class SecurityController extends AbstractController
 
             $em->persist($user);
             $em->flush();
-
-            // Auto-login the newly registered admin
-            $security->login($user, 'form_login', 'main');
 
             $this->addFlash('success', 'Admin account created successfully!');
             return $this->redirectToRoute('admin_dashboard');

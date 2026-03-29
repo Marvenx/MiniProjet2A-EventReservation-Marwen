@@ -5,6 +5,27 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('js/passkey.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePasswordBtn = document.getElementById('togglePasswordAuth');
+            const passwordSection = document.getElementById('passwordSection');
+            const passkeyLoginBtn = document.getElementById('passkeyLoginBtn');
+            const passwordInput = document.getElementById('inputPassword');
+
+            if (togglePasswordBtn) {
+                togglePasswordBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    passwordSection.classList.toggle('d-none');
+                    if (passwordSection.classList.contains('d-none')) {
+                        togglePasswordBtn.innerHTML = '<i class="bi bi-key me-2"></i>Utiliser un mot de passe';
+                    } else {
+                        togglePasswordBtn.innerHTML = '<i class="bi bi-key me-2"></i>Masquer le mot de passe';
+                        passwordInput.focus();
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}
 
 {% block body %}
@@ -14,15 +35,15 @@
         <div class="row justify-content-center">
             <div class="col-md-5 col-lg-4">
                 <div class="card card-static p-4 p-md-5" style="border-top: 4px solid var(--primary);" data-aos="fade-up">
-                    
+
                     <!-- Header -->
                     <div class="text-center mb-4">
                         <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
                              style="width: 64px; height: 64px; background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);">
                             <i class="bi bi-shield-lock-fill fs-3" style="color: var(--primary);"></i>
                         </div>
-                        <h4 class="fw-800 mb-1">Connexion sécurisée</h4>
-                        <p class="text-muted small mb-0">Entrez vos identifiants ou utilisez votre Passkey</p>
+                        <h4 class="fw-800 mb-1">Connexion</h4>
+                        <p class="text-muted small mb-0">Accédez à votre compte EventHub</p>
                     </div>
 
                     {% if error %}
@@ -32,67 +53,72 @@
                         </div>
                     {% endif %}
 
-                    <!-- Passkey Button -->
-                    <button id="passkeyLoginBtn" 
-                            class="btn w-100 mb-3 fw-600 d-flex align-items-center justify-content-center gap-2"
-                            style="background: #1e293b; color: white; border-radius: 10px; padding: 0.85rem;">
-                        <i class="bi bi-fingerprint fs-5"></i> 
-                        <span>Se connecter avec Passkey</span>
-                    </button>
-
-                    <!-- Divider -->
-                    <div class="d-flex align-items-center gap-3 my-3">
-                        <hr class="flex-grow-1 m-0">
-                        <span class="text-muted small fw-500">ou par email</span>
-                        <hr class="flex-grow-1 m-0">
-                    </div>
-
                     <!-- Login Form -->
                     <form method="post">
-                        <div class="mb-3">
-                            <label for="inputEmail" class="form-label">Adresse email</label>
+                        <!-- Email Field (Always Visible) -->
+                        <div class="mb-4">
+                            <label for="inputEmail" class="form-label fw-600">Adresse email</label>
                             <div class="input-group">
                                 <span class="input-group-text">
                                     <i class="bi bi-envelope text-muted"></i>
                                 </span>
-                                <input type="email" 
-                                       name="_username" 
-                                       id="inputEmail" 
-                                       class="form-control" 
+                                <input type="email"
+                                       name="_username"
+                                       id="inputEmail"
+                                       class="form-control"
                                        value="{{ last_username }}"
                                        placeholder="vous@exemple.com"
-                                       required 
+                                       required
                                        autofocus>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="inputPassword" class="form-label">Mot de passe</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-lock text-muted"></i>
-                                </span>
-                                <input type="password" 
-                                       name="_password" 
-                                       id="inputPassword" 
-                                       class="form-control"
-                                       placeholder="••••••••"
-                                       required>
-                            </div>
-                        </div>
-
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                        <button type="submit" class="btn btn-primary w-100 fw-600 py-2 mb-3">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                        <!-- Passkey Option -->
+                        <button id="passkeyLoginBtn"
+                                type="button"
+                                class="btn w-100 mb-3 fw-600 d-flex align-items-center justify-content-center gap-2"
+                                style="background: #1e293b; color: white; border-radius: 10px; padding: 0.85rem;">
+                            <i class="bi bi-fingerprint fs-5"></i>
+                            <span>Se connecter avec Passkey</span>
                         </button>
+
+                        <!-- Password Option Toggle -->
+                        <button id="togglePasswordAuth"
+                                type="button"
+                                class="btn btn-outline-secondary w-100 mb-3 fw-600"
+                                style="border-radius: 10px; padding: 0.7rem;">
+                            <i class="bi bi-key me-2"></i>Utiliser un mot de passe
+                        </button>
+
+                        <!-- Password Section (Hidden by default) -->
+                        <div id="passwordSection" class="d-none">
+                            <div class="mb-4">
+                                <label for="inputPassword" class="form-label fw-600">Mot de passe</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-lock text-muted"></i>
+                                    </span>
+                                    <input type="password"
+                                           name="_password"
+                                           id="inputPassword"
+                                           class="form-control"
+                                           placeholder="••••••••">
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                            <button type="submit" class="btn btn-primary w-100 fw-600 py-2">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                            </button>
+                        </div>
                     </form>
 
-                    <!-- Admin Login Link -->
+                    <!-- Signup Link -->
                     <div class="text-center pt-3 border-top">
-                        <p class="text-muted small mb-2">Vous êtes administrateur ?</p>
-                        <a href="{{ path('app_admin_login') }}" class="btn btn-outline-danger btn-sm rounded-pill px-4">
-                            <i class="bi bi-shield-lock me-1"></i>Connexion Admin
+                        <p class="text-muted small mb-2">Pas encore de compte ?</p>
+                        <a href="{{ path('app_register') }}" class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                            <i class="bi bi-person-fill-add me-1"></i>Créer un compte
                         </a>
                     </div>
                 </div>
@@ -101,7 +127,11 @@
                 <div class="text-center mt-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="d-inline-block bg-white rounded-lg px-4 py-3 shadow-sm">
                         <p class="small text-muted mb-1"><i class="bi bi-info-circle me-1"></i>Comptes de démonstration</p>
-                        <code class="small">user@example.com</code> / <code class="small">user123</code>
+                        <div class="small">
+                            <code>user@example.com</code> / <code>user123</code>
+                            <br>
+                            <code>admin@example.com</code> / <code>admin123</code>
+                        </div>
                     </div>
                 </div>
             </div>

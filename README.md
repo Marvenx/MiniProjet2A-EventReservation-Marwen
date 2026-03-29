@@ -1,3 +1,201 @@
+# Event Reservation System - EventHub
+
+---
+
+## 🇫🇷 Description du Projet
+
+**EventHub** est une application web moderne de gestion de réservations d'événements. Elle permet aux utilisateurs de parcourir les événements disponibles, consulter les détails (date, lieu, places disponibles) et effectuer des réservations sécurisées. Les administrateurs disposent d'un tableau de bord complet pour gérer les événements, consulter les réservations et maintenir le système.
+
+### Fonctionnalités Principales
+- **Pour les utilisateurs**: Navigation d'événements, consultation de détails, système de réservation avec validation de places
+- **Pour les administrateurs**: Tableau de bord statistique, gestion complète des événements (CRUD), consultation des réservations
+- **Authentification sécurisée**: Connexion par email/mot de passe, Passkeys (WebAuthn/biométrique), JWT API
+- **Interface moderne**: Design responsive avec Bootstrap 5, animations AOS, thème Flatly
+
+---
+
+## 🔧 Technologies Utilisées
+
+- **Backend**: Symfony 7.4 (PHP 8.2+)
+- **Base de données**: PostgreSQL 15
+- **Frontend**: Bootstrap 5.3, Bootstrap Icons, AOS (Animate On Scroll)
+- **Authentification**:
+  - Session-based (form login)
+  - Passkeys/WebAuthn (biométrique)
+  - JWT tokens (API)
+- **Containerisation**: Docker & Docker Compose
+- **Outils**: Composer, Doctrine ORM, Symfony Console
+
+---
+
+## 📋 Consignes d'Installation
+
+### Prérequis
+- **Docker** et **Docker Compose**
+- **Git**
+- Environ 2GB d'espace disque
+
+---
+
+### 🐳 Installation avec Docker (Recommandé)
+
+La méthode Docker la plus simple - tout est configuré automatiquement !
+
+#### Démarrage rapide (3 étapes)
+
+**1. Cloner le projet**
+```bash
+git clone <url-du-repository>
+cd event-reservation
+```
+
+**2. Exécuter le script de déploiement**
+
+```bash
+# Linux/Mac
+chmod +x docker-deploy.sh
+./docker-deploy.sh
+
+# Windows (PowerShell)
+.\docker-deploy.ps1
+```
+
+**3. Accéder à l'application**
+
+```
+Application: http://localhost:8080
+Adminer (DB): http://localhost:8081
+```
+
+#### Ce que le script configure automatiquement ✅
+- ✅ Génération des clés JWT
+- ✅ Création des conteneurs (PHP 8.2, Nginx, PostgreSQL 15)
+- ✅ Migrations de base de données
+- ✅ Chargement des données de démonstration
+- ✅ Configuration complète de l'environnement
+
+#### Commandes Docker utiles
+```bash
+# Afficher les logs
+docker compose logs -f
+
+# Accéder au conteneur PHP
+docker compose exec php bash
+
+# Arrêter les services
+docker compose down
+
+# Redémarrer complètement
+docker compose down -v && docker compose up -d --build
+```
+
+---
+
+### 💻 Alternative: Installation Locale
+
+Pour développement sans Docker (nécessite PHP et PostgreSQL locaux).
+
+#### Prérequis Locaux
+- **PHP 8.2+** avec extensions: `pdo_pgsql`, `sodium`, `zip`, `opcache`
+- **Composer** (gestionnaire de dépendances PHP)
+- **PostgreSQL 15+**
+- **Git**
+
+#### 1. Cloner le projet
+```bash
+git clone <url-du-repository>
+cd event-reservation
+```
+
+#### 2. Installer les dépendances
+```bash
+composer install
+```
+
+#### 3. Configurer l'environnement
+```bash
+# Copier le fichier d'exemple
+cp .env.example .env.local
+```
+
+Éditer `.env.local` et configurer:
+```bash
+# Base de données (adapter selon votre config)
+DATABASE_URL="postgresql://postgres:password@127.0.0.1:5432/event_reservation?serverVersion=15&charset=utf8"
+
+# Email (optionnel en développement)
+MAILER_DSN="gmail://your-email@gmail.com:app-password@default"
+
+# JWT
+JWT_PASSPHRASE="your-secret-passphrase-change-in-production"
+
+# Domain
+APP_DOMAIN="localhost"
+```
+
+#### 4. Créer la base de données et migrations
+```bash
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+```
+
+#### 5. Charger les données de démonstration
+```bash
+php bin/console doctrine:fixtures:load --no-interaction
+```
+
+#### 6. Générer les clés JWT
+```bash
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 \
+  -aes256 -pass pass:your-passphrase \
+  -out config/jwt/private.pem
+
+openssl pkey -in config/jwt/private.pem \
+  -pubout -out config/jwt/public.pem \
+  -passin pass:your-passphrase
+```
+
+#### 7. Lancer le serveur
+```bash
+php -S localhost:8000 -t public
+```
+
+Accès: **http://localhost:8000**
+
+---
+
+## 👤 Comptes de Démonstration
+
+| Email | Mot de passe | Rôle |
+|-------|-------------|------|
+| user@example.com | user123 | Utilisateur |
+| admin@example.com | admin123 | Administrateur |
+
+---
+
+## 🔐 Authentification
+
+### Connexion Utilisateur
+1. Accéder à `/login`
+2. Entrer email
+3. Choisir:
+   - **Passkey** (biométrique/Windows Hello)
+   - **Mot de passe** (traditionnel)
+
+### Création de Compte
+- `/register` - Inscription public (accès utilisateur)
+- `/admin/register` - Création admin (protégée, admins uniquement)
+
+### Admin
+- `/admin/login` - Connexion administrateur
+- `/admin` - Tableau de bord
+
+---
+
+---
+
+## 🇬🇧 English Documentation
+
 # Event Reservation System
 
 A modern web application for managing event reservations built with Symfony 7.
@@ -20,92 +218,146 @@ A modern web application for managing event reservations built with Symfony 7.
 
 - **Backend**: Symfony 7.4
 - **Database**: PostgreSQL 15
-- **Authentication**: 
+- **Authentication**:
   - Form-based login with CSRF protection
   - JWT tokens for API (LexikJWTAuthenticationBundle)
-  - Passkeys/WebAuthn support (planned)
+  - Passkeys/WebAuthn support
 - **Frontend**: Bootstrap 5 (Bootswatch Flatly theme), Bootstrap Icons
-- **Containerization**: Docker (planned)
+- **Containerization**: Docker
 
 ## Installation
 
 ### Prerequisites
-- PHP 8.1+ with extensions: pdo_pgsql, sodium
-- Composer
-- PostgreSQL 15
+- **Docker** and **Docker Compose**
+- **Git**
+- ~2GB disk space
 
-### Setup
+### 🐳 Setup with Docker (Recommended)
 
+Simplest method - everything is automatically configured!
+
+#### Quick Start (3 steps)
+
+**1. Clone the repository**
 ```bash
-# Clone the repository
 git clone <repository-url>
 cd event-reservation
+```
 
-# Install dependencies
+**2. Run the deployment script**
+
+```bash
+# Linux/Mac
+chmod +x docker-deploy.sh
+./docker-deploy.sh
+
+# Windows (PowerShell)
+.\docker-deploy.ps1
+```
+
+**3. Access the application**
+
+```
+Application: http://localhost:8080
+Adminer (Database): http://localhost:8081
+```
+
+#### What the script automatically configures ✅
+- ✅ JWT key generation
+- ✅ Container creation (PHP 8.2, Nginx, PostgreSQL 15)
+- ✅ Database migrations
+- ✅ Demo data loading
+- ✅ Full environment setup
+
+#### Useful Docker commands
+```bash
+# View logs
+docker compose logs -f
+
+# Access PHP container
+docker compose exec php bash
+
+# Stop services
+docker compose down
+
+# Full restart
+docker compose down -v && docker compose up -d --build
+```
+
+---
+
+### 💻 Alternative: Local Installation
+
+For development without Docker (requires local PHP and PostgreSQL).
+
+#### Local Prerequisites
+- PHP 8.2+ with extensions: pdo_pgsql, sodium, zip, opcache
+- Composer
+- PostgreSQL 15+
+- Git
+
+#### 1. Clone the repository
+```bash
+git clone <repository-url>
+cd event-reservation
+```
+
+#### 2. Install dependencies
+```bash
 composer install
+```
 
-# Copy environment template and configure
+#### 3. Configure environment
+```bash
+# Copy environment template
 cp .env.example .env.local
+```
 
-# Edit .env.local with your local configuration
-# - DATABASE_URL: Set your PostgreSQL credentials
-# - MAILER_DSN: Configure email (or leave as null for development)
-# - JWT_PASSPHRASE: Change to a secure passphrase
-# - APP_DOMAIN: Set to your domain (localhost for development)
+Edit `.env.local`:
+```bash
+# Database (adapt to your config)
+DATABASE_URL="postgresql://postgres:password@127.0.0.1:5432/event_reservation?serverVersion=15&charset=utf8"
 
-# Create database and run migrations
+# Email (optional for development)
+MAILER_DSN="gmail://your-email@gmail.com:app-password@default"
+
+# JWT
+JWT_PASSPHRASE="your-secret-passphrase-change-in-production"
+
+# Domain
+APP_DOMAIN="localhost"
+```
+
+#### 4. Create database and migrations
+```bash
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
+```
 
-# Load sample data (optional)
-php bin/console doctrine:fixtures:load
+#### 5. Load demo data
+```bash
+php bin/console doctrine:fixtures:load --no-interaction
+```
 
-# Generate JWT keys (use passphrase from JWT_PASSPHRASE in .env.local)
+#### 6. Generate JWT keys
+```bash
 openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 \
   -aes256 -pass pass:your-passphrase \
   -out config/jwt/private.pem
+
 openssl pkey -in config/jwt/private.pem \
   -pubout -out config/jwt/public.pem \
   -passin pass:your-passphrase
+```
 
-# Start development server
+#### 7. Start development server
+```bash
 php -S localhost:8000 -t public
 ```
 
-### Environment Configuration
+Access: **http://localhost:8000**
 
-Copy `.env.example` to `.env.local` and customize:
-
-```bash
-cp .env.example .env.local
-```
-
-**Key variables to configure:**
-
-- `DATABASE_URL`: PostgreSQL connection string
-  ```
-  postgresql://postgres:password@127.0.0.1:5432/event_reservation?serverVersion=15&charset=utf8
-  ```
-
-- `MAILER_DSN`: Email configuration (Gmail/SendGrid or null for dev)
-  ```
-  gmail://your-email@gmail.com:app-password@default
-  sendgrid+smtp://apikey:your-key@default
-  ```
-
-- `JWT_PASSPHRASE`: Secure passphrase for JWT keys (use meaningful value)
-  ```
-  your-secure-passphrase-here
-  ```
-
-- `APP_DOMAIN`: Domain for WebAuthn/Passkey verification
-  ```
-  localhost (development)
-  your-domain.com (production)
-  ```
-
-⚠️ **Important:** `.env.local` is git-ignored (won't be committed). Use `.env.example` as template for new developers.
-
+---
 
 ### Demo Accounts
 
