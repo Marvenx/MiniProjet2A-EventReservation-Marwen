@@ -283,7 +283,7 @@
                                         <i class="bi bi-fingerprint me-2 text-primary"></i>Passkeys
                                     </a></li>
                                     {% if is_granted('ROLE_ADMIN') %}
-                                        <li><a class="dropdown-item py-2" href="{{ path('app_register') }}">
+                                        <li><a class="dropdown-item py-2" href="{{ path('app_admin_register') }}">
                                             <i class="bi bi-person-plus me-2 text-primary"></i>Créer un Admin
                                         </a></li>
                                         <li><hr class="dropdown-divider my-1"></li>
@@ -339,7 +339,7 @@
                     <div class="col-lg-3">
                         <h6 class="text-white fw-600 mb-3">Contact</h6>
                         <p class="mb-1"><i class="bi bi-geo-alt me-2"></i>ISSAT Sousse</p>
-                        <p class="mb-0"><i class="bi bi-mortarboard me-2"></i>FIA3-GL 2025/2026</p>
+                        <p class="mb-0"><i class="bi bi-mortarboard me-2"></i>92 200 200</p>
                     </div>
                     <div class="col-lg-3">
                         <h6 class="text-white fw-600 mb-3">Technologies</h6>
@@ -355,7 +355,7 @@
                 <p class="text-center mb-0">
                     © {{ "now"|date("Y") }} EventHub — ISSAT Sousse
                     <span class="mx-2">·</span>
-                    Développé avec <i class="bi bi-heart-fill text-danger"></i> en Symfony 7
+                    Développé en Symfony 7
                 </p>
             </div>
         </footer>
