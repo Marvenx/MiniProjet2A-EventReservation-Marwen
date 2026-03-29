@@ -279,6 +279,9 @@
                                             <span class="badge bg-danger mt-1">Admin</span>
                                         {% endif %}
                                     </li>
+                                    <li><a class="dropdown-item py-2" href="{{ path('passkey_settings') }}">
+                                        <i class="bi bi-fingerprint me-2 text-primary"></i>Passkeys
+                                    </a></li>
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <li><a class="dropdown-item py-2" href="{{ path('app_register') }}">
                                             <i class="bi bi-person-plus me-2 text-primary"></i>Créer un Admin

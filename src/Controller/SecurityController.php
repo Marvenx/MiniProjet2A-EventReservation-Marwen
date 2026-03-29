@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationType;
+use App\Service\PasskeyService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -81,6 +83,18 @@ class SecurityController extends AbstractController
 
         return $this->render('security/register.html.twig', [
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/account/passkeys', name: 'passkey_settings')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function passkeySettings(PasskeyService $passkeyService): Response
+    {
+        $user = $this->getUser();
+        $passkeys = $passkeyService->getCredentials($user);
+
+        return $this->render('security/passkey_settings.html.twig', [
+            'passkeys' => $passkeys,
         ]);
     }
 

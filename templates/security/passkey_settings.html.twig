@@ -1,0 +1,231 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Passkeys - Sécurité{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/passkey.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const addBtn = document.getElementById('addPasskeyBtn');
+            const supportWarning = document.getElementById('supportWarning');
+            const passkeyList = document.getElementById('passkeyList');
+            
+            // Check WebAuthn support (PIN works too, no need for biometrics)
+            if (!window.passkeyManager.isSupported) {
+                addBtn.disabled = true;
+                supportWarning.classList.remove('d-none');
+            }
+            
+            // Add passkey button handler
+            addBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                
+                const nameInput = document.getElementById('passkeyName');
+                const name = nameInput.value.trim() || 'Windows Hello';
+                
+                addBtn.disabled = true;
+                const originalText = addBtn.innerHTML;
+                addBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Configuration...';
+                
+                try {
+                    await window.passkeyManager.register(name);
+                    
+                    // Success - reload page to show new passkey
+                    location.reload();
+                } catch (error) {
+                    console.error('Passkey registration error:', error);
+                    
+                    addBtn.innerHTML = originalText;
+                    addBtn.disabled = false;
+                    
+                    // Show error
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger mt-3';
+                    alertDiv.innerHTML = `<i class="bi bi-exclamation-triangle me-2"></i>${error.message}`;
+                    document.getElementById('addPasskeyForm').appendChild(alertDiv);
+                    
+                    setTimeout(() => alertDiv.remove(), 5000);
+                }
+            });
+            
+            // Delete passkey handlers
+            document.querySelectorAll('.delete-passkey').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    
+                    const id = btn.dataset.id;
+                    const name = btn.dataset.name;
+                    
+                    if (!confirm(`Supprimer la passkey "${name}" ?`)) {
+                        return;
+                    }
+                    
+                    try {
+                        await window.passkeyManager.deletePasskey(id);
+                        location.reload();
+                    } catch (error) {
+                        alert('Erreur: ' + error.message);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+<div class="min-vh-100 py-5" style="background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                
+                <!-- Header -->
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                         style="width: 80px; height: 80px; background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);">
+                        <i class="bi bi-fingerprint fs-1" style="color: var(--primary);"></i>
+                    </div>
+                    <h2 class="fw-800 mb-2">Passkeys</h2>
+                    <p class="text-muted">Gérez vos méthodes de connexion Windows Hello, Touch ID ou Face ID</p>
+                </div>
+
+                <!-- Warning for unsupported browsers -->
+                <div id="supportWarning" class="alert alert-warning d-none mb-4" data-aos="fade-up">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Non supporté:</strong> Votre appareil ne supporte pas Windows Hello ou les passkeys.
+                    Essayez avec un appareil équipé d'un lecteur d'empreinte ou de reconnaissance faciale.
+                </div>
+
+                <!-- Existing Passkeys -->
+                <div class="card card-static mb-4" data-aos="fade-up">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-700">
+                            <i class="bi bi-key me-2 text-primary"></i>
+                            Vos Passkeys
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if passkeys is empty %}
+                            <div class="text-center py-5 text-muted">
+                                <i class="bi bi-shield-x fs-1 mb-3 d-block opacity-50"></i>
+                                <p class="mb-0">Aucune passkey configurée</p>
+                                <small>Ajoutez une passkey pour vous connecter sans mot de passe</small>
+                            </div>
+                        {% else %}
+                            <div class="list-group list-group-flush" id="passkeyList">
+                                {% for passkey in passkeys %}
+                                    <div class="list-group-item d-flex align-items-center justify-content-between py-3 px-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                                 style="width: 48px; height: 48px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+                                                <i class="bi bi-fingerprint fs-4 text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-600">{{ passkey.name }}</div>
+                                                <small class="text-muted">
+                                                    Créée le {{ passkey.createdAt|date('d/m/Y à H:i') }}
+                                                    {% if passkey.lastUsedAt %}
+                                                        · Dernière utilisation: {{ passkey.lastUsedAt|date('d/m/Y') }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-danger delete-passkey"
+                                                data-id="{{ passkey.id }}"
+                                                data-name="{{ passkey.name }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Add New Passkey -->
+                <div class="card card-static" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-700">
+                            <i class="bi bi-plus-circle me-2 text-success"></i>
+                            Ajouter une Passkey
+                        </h5>
+                    </div>
+                    <div class="card-body" id="addPasskeyForm">
+                        <p class="text-muted mb-4">
+                            Utilisez Windows Hello, Touch ID, ou Face ID pour vous connecter sans mot de passe.
+                            C'est plus rapide et plus sécurisé.
+                        </p>
+                        
+                        <div class="mb-4">
+                            <label for="passkeyName" class="form-label">Nom de la passkey</label>
+                            <input type="text" 
+                                   id="passkeyName" 
+                                   class="form-control" 
+                                   placeholder="Ex: Mon PC Windows, MacBook Pro"
+                                   value="Windows Hello">
+                            <div class="form-text">
+                                Donnez un nom pour identifier cet appareil
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="addPasskeyBtn" class="btn btn-primary btn-lg">
+                            <i class="bi bi-fingerprint me-2"></i>
+                            Configurer Windows Hello
+                        </button>
+                    </div>
+                </div>
+
+                <!-- How it works -->
+                <div class="card card-static mt-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-body">
+                        <h6 class="fw-700 mb-3">
+                            <i class="bi bi-info-circle me-2 text-primary"></i>
+                            Comment ça marche ?
+                        </h6>
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="d-flex gap-3">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0"
+                                         style="width: 32px; height: 32px;">1</div>
+                                    <div>
+                                        <strong>Ajoutez</strong>
+                                        <p class="mb-0 small text-muted">Configurez Windows Hello avec votre empreinte ou visage</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex gap-3">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0"
+                                         style="width: 32px; height: 32px;">2</div>
+                                    <div>
+                                        <strong>Connectez-vous</strong>
+                                        <p class="mb-0 small text-muted">Sur la page de connexion, cliquez "Passkey"</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex gap-3">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0"
+                                         style="width: 32px; height: 32px;">3</div>
+                                    <div>
+                                        <strong>C'est fait!</strong>
+                                        <p class="mb-0 small text-muted">Authentifiez-vous avec votre empreinte</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Back link -->
+                <div class="text-center mt-4">
+                    <a href="{{ path('home') }}" class="text-muted text-decoration-none">
+                        <i class="bi bi-arrow-left me-1"></i> Retour à l'accueil
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

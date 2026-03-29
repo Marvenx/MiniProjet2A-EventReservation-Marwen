@@ -14,18 +14,26 @@ security:
             security: false
         
         login:
-            pattern: ^/api/login
+            pattern: ^/api/login$
             stateless: true
             json_login:
                 check_path: /api/login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+        # Passkey login endpoints - public, stateless
+        passkey_login:
+            pattern: ^/api/passkey/login
+            stateless: true
+            security: false
+
+        # All other API endpoints require JWT
         api:
             pattern: ^/api
             stateless: true
             jwt: ~
 
+        # Main firewall with session - handles web pages AND passkey registration
         main:
             lazy: true
             provider: app_user_provider
@@ -39,7 +47,8 @@ security:
                 target: home
 
     access_control:
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/passkey/login, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin, roles: ROLE_ADMIN }
 
