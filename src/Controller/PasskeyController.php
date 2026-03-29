@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PasskeyController extends AbstractController
@@ -17,7 +19,8 @@ class PasskeyController extends AbstractController
     public function __construct(
         private PasskeyService $passkeyService,
         private JWTTokenManagerInterface $jwtManager,
-        private Security $security
+        private Security $security,
+        private TokenStorageInterface $tokenStorage
     ) {}
 
     // ==========================================
@@ -157,16 +160,24 @@ class PasskeyController extends AbstractController
             }
 
             $user = $this->passkeyService->verifyAuthentication($data);
-            
-            // Log the user in via session (for web pages)
-            $this->security->login($user, 'form_login', 'main');
-            
+
+            // Create authenticated token for the main firewall
+            $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+
+            // Store in token storage for current request
+            $this->tokenStorage->setToken($token);
+
+            // Serialize to session for future requests
+            // The main firewall stores tokens under '_security_main' key
+            $session = $request->getSession();
+            $session->set('_security_main', serialize($token));
+
             // Also generate JWT for API use
-            $token = $this->jwtManager->create($user);
+            $jwtToken = $this->jwtManager->create($user);
 
             return $this->json([
                 'success' => true,
-                'token' => $token,
+                'token' => $jwtToken,
                 'user' => [
                     'id' => $user->getId(),
                     'email' => $user->getEmail(),

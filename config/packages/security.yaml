@@ -12,7 +12,7 @@ security:
         dev:
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
-        
+
         login:
             pattern: ^/api/login$
             stateless: true
@@ -21,11 +21,12 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        # Passkey login endpoints - public, stateless
+        # Passkey login endpoints - NOT stateless so we can create sessions
         passkey_login:
             pattern: ^/api/passkey/login
-            stateless: true
-            security: false
+            lazy: true
+            provider: app_user_provider
+            security: true
 
         # All other API endpoints require JWT
         api:

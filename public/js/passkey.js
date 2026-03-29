@@ -153,6 +153,7 @@ class PasskeyManager {
         const optionsResponse = await fetch('/api/passkey/login/options', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ email })
         });
 
@@ -209,6 +210,7 @@ class PasskeyManager {
         const verifyResponse = await fetch('/api/passkey/login/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify(response)
         });
 
