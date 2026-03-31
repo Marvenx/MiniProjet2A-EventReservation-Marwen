@@ -39,7 +39,7 @@
 
 ### 🐳 Installation avec Docker (Recommandé)
 
-La méthode Docker la plus simple - tout est configuré automatiquement !
+Méthode recommandée pour exécuter l'application avec PostgreSQL + Nginx + Mailpit.
 
 #### Démarrage rapide (3 étapes)
 
@@ -54,40 +54,68 @@ cd event-reservation
 ```bash
 # Linux/Mac
 chmod +x docker-deploy.sh
-./docker-deploy.sh
+./docker-deploy.sh init
 
 # Windows (PowerShell)
-.\docker-deploy.ps1
+.\docker-deploy.ps1 init
 ```
 
 **3. Accéder à l'application**
 
 ```
 Application: http://localhost:8080
-Adminer (DB): http://localhost:8081
+Mailpit (emails): http://localhost:8026
+PostgreSQL (host): localhost:5435
 ```
 
-#### Ce que le script configure automatiquement ✅
+#### Ce que le script configure en mode `init` ✅
 - ✅ Génération des clés JWT
-- ✅ Création des conteneurs (PHP 8.2, Nginx, PostgreSQL 15)
+- ✅ Création des conteneurs (PHP 8.2-FPM, Nginx, PostgreSQL 15, Mailpit)
 - ✅ Migrations de base de données
 - ✅ Chargement des données de démonstration
-- ✅ Configuration complète de l'environnement
+- ✅ Démarrage de l'application sur le port `8080`
+
+#### Démarrage quotidien (mode `start`)
+
+Après l'initialisation, utilisez le mode `start` (ou `docker compose up -d`) pour relancer le projet sans réexécuter migrations/fixtures.
+
+```bash
+# Linux/Mac
+./docker-deploy.sh start
+
+# Windows (PowerShell)
+.\docker-deploy.ps1 start
+```
+
+#### Mode manuel (plus précis avec `.env.docker`)
+
+Cette option force Docker Compose à utiliser les variables de `.env.docker`.
+
+```bash
+# Build + start avec l'environnement Docker
+docker compose --env-file .env.docker up -d --build
+
+# Initialisation DB (une seule fois ou après reset)
+docker compose --env-file .env.docker exec -T php php bin/console doctrine:migrations:migrate --no-interaction
+docker compose --env-file .env.docker exec -T php php bin/console doctrine:fixtures:load --no-interaction
+```
 
 #### Commandes Docker utiles
 ```bash
 # Afficher les logs
-docker compose logs -f
+docker compose --env-file .env.docker logs -f
 
 # Accéder au conteneur PHP
-docker compose exec php bash
+docker compose --env-file .env.docker exec php bash
 
 # Arrêter les services
-docker compose down
+docker compose --env-file .env.docker down
 
 # Redémarrer complètement
-docker compose down -v && docker compose up -d --build
+docker compose --env-file .env.docker down -v && docker compose --env-file .env.docker up -d --build
 ```
+
+> Note: `compose.override.yaml` est chargé automatiquement par Docker Compose en local et expose PostgreSQL sur `localhost:5435`.
 
 ---
 
@@ -234,7 +262,7 @@ A modern web application for managing event reservations built with Symfony 7.
 
 ### 🐳 Setup with Docker (Recommended)
 
-Simplest method - everything is automatically configured!
+Recommended way to run the app with PostgreSQL + Nginx + Mailpit.
 
 #### Quick Start (3 steps)
 
@@ -249,40 +277,68 @@ cd event-reservation
 ```bash
 # Linux/Mac
 chmod +x docker-deploy.sh
-./docker-deploy.sh
+./docker-deploy.sh init
 
 # Windows (PowerShell)
-.\docker-deploy.ps1
+.\docker-deploy.ps1 init
 ```
 
 **3. Access the application**
 
 ```
 Application: http://localhost:8080
-Adminer (Database): http://localhost:8081
+Mailpit (emails): http://localhost:8026
+PostgreSQL (host): localhost:5435
 ```
 
-#### What the script automatically configures ✅
+#### What the script configures in `init` mode ✅
 - ✅ JWT key generation
-- ✅ Container creation (PHP 8.2, Nginx, PostgreSQL 15)
+- ✅ Container creation (PHP 8.2-FPM, Nginx, PostgreSQL 15, Mailpit)
 - ✅ Database migrations
 - ✅ Demo data loading
-- ✅ Full environment setup
+- ✅ App startup on port `8080`
+
+#### Daily Startup (`start` mode)
+
+After first initialization, use `start` mode (or plain `docker compose up -d`) to run the project without rerunning migrations/fixtures.
+
+```bash
+# Linux/Mac
+./docker-deploy.sh start
+
+# Windows (PowerShell)
+.\docker-deploy.ps1 start
+```
+
+#### Manual Mode (most precise with `.env.docker`)
+
+This mode forces Docker Compose to use environment values from `.env.docker`.
+
+```bash
+# Build + start with Docker environment variables
+docker compose --env-file .env.docker up -d --build
+
+# Initialize DB (first run or after reset)
+docker compose --env-file .env.docker exec -T php php bin/console doctrine:migrations:migrate --no-interaction
+docker compose --env-file .env.docker exec -T php php bin/console doctrine:fixtures:load --no-interaction
+```
 
 #### Useful Docker commands
 ```bash
 # View logs
-docker compose logs -f
+docker compose --env-file .env.docker logs -f
 
 # Access PHP container
-docker compose exec php bash
+docker compose --env-file .env.docker exec php bash
 
 # Stop services
-docker compose down
+docker compose --env-file .env.docker down
 
 # Full restart
-docker compose down -v && docker compose up -d --build
+docker compose --env-file .env.docker down -v && docker compose --env-file .env.docker up -d --build
 ```
+
+> Note: `compose.override.yaml` is auto-loaded by Docker Compose in local development and publishes PostgreSQL on `localhost:5435`.
 
 ---
 

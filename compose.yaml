@@ -15,7 +15,7 @@ services:
       - JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
       - JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
       - APP_DOMAIN=${APP_DOMAIN:-localhost}
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-marwen2003}@database:5432/${POSTGRES_DB:-event_reservation}?serverVersion=15&charset=utf8
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@database:5432/${POSTGRES_DB:-event_reservation}?serverVersion=15&charset=utf8
       - MAILER_DSN=${MAILER_DSN}
     volumes:
       - ./:/var/www/html:rw
@@ -48,7 +48,7 @@ services:
     networks:
       - app_network
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health.php"]
       timeout: 5s
       retries: 5
       start_period: 30s
@@ -60,7 +60,7 @@ services:
     container_name: symfony_database
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-event_reservation}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-marwen2003}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
     healthcheck:
       test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-event_reservation}", "-U", "${POSTGRES_USER:-postgres}"]
@@ -78,8 +78,8 @@ services:
     image: axllent/mailpit
     container_name: symfony_mailer
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - "1026:1025"
+      - "8026:8025"
     environment:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
